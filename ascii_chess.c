@@ -25,39 +25,18 @@
 */
 
 void setup_board(int *board){
-    const int board_length = 8;
-    //int board[64] = {0};
-    int i = 0;
+    int temp_board[64] = {
+        2,3,4,5,0,4,3,2,
+        1,1,1,1,1,1,1,1,
+        0,0,0,0,0,0,0,0,
+        0,0,0,0,0,11,0,0,
+        0,0,0,0,0,0,0,6,
+        0,0,0,0,0,7,0,0,
+        7,7,7,7,7,0,7,7,
+        8,9,10,0,12,10,9,8};
 
-    for(i = 0; i < 32; i++){
-
-        if(i == 0 || i == 7){
-            board[i] = 2;
-        }else if(i == 1 || i == 6){
-            board[i] = 3;
-        }else if(i == 2 || i == 5){
-            board[i] = 4;
-        }else if(i == 3){
-            board[i] = 5;
-        }else if(i == 4){
-            board[i] = 6;
-        }else if(i < 16){
-            board[i] = 1;
-        }else if(i < 24){
-            board[i + 32] = 7;
-        }else if(i == 24 || i == 31){
-            board[i + 32] = 8;
-        }else if(i == 25 || i == 30){
-            board[i + 32] = 9;
-        }else if(i == 26 || i == 29){
-            board[i + 32] = 10;
-        }else if(i == 27){
-            board[i + 32] = 11;
-        }else if(i == 28){
-            board[i + 32] = 12;
-        }else{
-            wprintf(L"Error");
-        }
+     for (int i = 0; i < 64; i++) {
+        board[i] = temp_board[i];
     }
 
 }
@@ -81,15 +60,11 @@ int print_board(int board[], int move_next){
     wchar_t black_queen = L'♕';
     wchar_t black_king = L'♔';
 
-    //wprintf(L"\n");
 
     int board_code;
-    wprintf(L"\n ");
-    for(int i = 1; i<= board_length; i++){
-        wprintf(L"%i ", i);
-    }
+
     wprintf(L"\n");
-    for(i = 0; i < board_length; i++){
+    for(i = board_length - 1; i >= 0; i--){
         for(int j = 0; j < board_length; j++){
             board_code = board[i * 8 + j];
             if(board_code == 1){
@@ -124,6 +99,13 @@ int print_board(int board[], int move_next){
         }
         wprintf(L" %i \n", i + 1);
     }
+
+    wprintf(L" ");
+    for(int i = 1; i<= board_length; i++){
+        wprintf(L"%c ", 'A' + i - 1);
+    }
+    wprintf(L"\n  ");
+
     if(move_next){
         wprintf(L"it is blacks go");
     }else{
@@ -196,6 +178,8 @@ int check_path(int *board, int next_move, int start, int end){
     return 0;
 }
 
+
+
 int check_king(int board[],  int current_move, int start, int end){
     int size = 64;
     
@@ -212,6 +196,7 @@ int check_king(int board[],  int current_move, int start, int end){
             break;
         }
     }
+    wprintf(L"king %i,",i);
 
     // now check king threats
     // CHECKING DOWN
@@ -346,7 +331,7 @@ int check_king(int board[],  int current_move, int start, int end){
 
     // top left
     current_square = i;
-    while(current_square - 9 > 0 && current_square % 8 != 0){
+    while(current_square - 9 > 0 && (current_square - 9) % 8 != 0){
         current_square -= 9;
         if(temp_board[current_square] == 0){
             continue;
@@ -372,7 +357,8 @@ int check_king(int board[],  int current_move, int start, int end){
 
     // checking top right
      current_square = i;
-    while(current_square - 7 > 0 && current_square % 8 != 0){
+     wprintf(L"AAAA2");
+    while(current_square - 7 > 0 && (current_square - 7) % 8 != 7){
         current_square -= 7;
         if(temp_board[current_square] == 0){
             continue;
@@ -397,8 +383,10 @@ int check_king(int board[],  int current_move, int start, int end){
 
         // checking bottom left
      current_square = i;
-    while(current_square + 7 < 64 && current_square % 8 != 7){
+    wprintf(L"%i top LEFT",current_square % 8);
+    while(current_square + 7 < 64 && (current_square + 7) % 8 != 7){
         current_square += 7;
+        wprintf(L"%i top LEFT",current_square);
         if(temp_board[current_square] == 0){
             continue;
         }else if((temp_board[current_square] < 7 && current_move == 0) || (temp_board[current_square] > 6 && current_move == 1)){
@@ -410,9 +398,11 @@ int check_king(int board[],  int current_move, int start, int end){
             temp_board[current_square] == 8 || 
             temp_board[current_square] == 9){
                 break;
-        }else if((temp_board[current_square] == 12 || temp_board[current_square] == 6) && current_square - end != 7){
+        }else if((temp_board[current_square] == 12 || temp_board[current_square] == 6) && current_square - i != 7){
             break;
-        }else if((temp_board[current_square] == 7) && (current_square - end) != 7){
+        }else if((temp_board[current_square] == 7) && (current_square - i) != 7){
+            wprintf(L"%i top %i right",current_square, i);
+
             break;
         }else{
             wprintf(L"%i bottom left ",current_square);
@@ -422,8 +412,9 @@ int check_king(int board[],  int current_move, int start, int end){
 
         // checking top right
      current_square = i;
-    while(current_square + 9 > 0 && current_square % 8 != 7){
+    while(current_square + 9 > 0 && (current_square + 9) % 8 != 0){
         current_square += 9;
+        wprintf(L"%i top right",current_square);
         if(temp_board[current_square] == 0){
             continue;
         }else if((temp_board[current_square] < 7 && current_move == 0) || (temp_board[current_square] > 6 && current_move == 1)){
@@ -435,9 +426,10 @@ int check_king(int board[],  int current_move, int start, int end){
             temp_board[current_square] == 8 || 
             temp_board[current_square] == 9){
                 break;
-        }else if((temp_board[current_square] == 12 || temp_board[current_square] == 6) && current_square - end != 9){
+        }else if((temp_board[current_square] == 12 || temp_board[current_square] == 6) && current_square - i != 9){
+            wprintf(L"%i top right",current_square);
             break;
-        }else if((temp_board[current_square] == 7) && (current_square - end) != 9){
+        }else if((temp_board[current_square] == 7) && (current_square - i) != 9){
             break;
         }else{
             wprintf(L"%i top right",current_square);
@@ -504,11 +496,9 @@ int valid_move_for_piece(int piece, int start, int end, int end_occupied){
     return 0;
 }
 
-void move_piece(int *board, wchar_t move[], int *next_move){
-    int move_row = char_to_row(move[0]);
-    int move_column = (int)move[1] - '0' - 1;
-    int result_row = char_to_row(move[4]);
-    int result_column = (int)move[5]- '0' - 1;
+
+
+int move_piece(int *board, int move_row, int move_column, int result_row, int result_column, int *next_move){
     int piece;
     int pinned = 0;
     int valid_move = 0;
@@ -517,7 +507,7 @@ void move_piece(int *board, wchar_t move[], int *next_move){
         piece = board[move_row * 8 + move_column];
         wprintf(L"%i",piece);
         if(piece == 0 || (*next_move == 0 && piece > 6) || (*next_move == 1 && piece < 7)){
-            return;
+            return 0;
         }
         int end_occupied = board[result_row * 8 + result_column] != 0;
         if(valid_move_for_piece(piece, move_row * 8 + move_column, result_row * 8 + result_column, end_occupied)){
@@ -536,9 +526,19 @@ void move_piece(int *board, wchar_t move[], int *next_move){
             board[result_row * 8 + result_column] = piece;
             *next_move = *next_move * -1 + 1;
             wprintf(L"%i ccc %i DDDD",piece, board[result_row * 8 + result_column]);
+            return 1;
         }
+        return 0;
     }
 
+}
+
+int process_move(int *board, wchar_t move[], int *next_move){
+    int move_column = move[0] - 'A';
+    int move_row = (int)move[1] - '0' - 1;
+    int result_column = move[4] - 'A';
+    int result_row = (int)move[5]- '0' - 1;
+    move_piece(board, move_row, move_column, result_row, result_column, next_move);
 }
 /*
  Piece mappping for list storage
@@ -556,6 +556,25 @@ void move_piece(int *board, wchar_t move[], int *next_move){
  black queen 27
  black king 28
 */
+int check_mate(int board[], int next_move){
+    int temp_board[64];
+    for(int i = 0; i<64;i++){
+        temp_board[i] = board[i];
+    }
+
+    for(int i = 0; i< 8; i++){
+        for(int j = 0; j < 8; j++){
+            for(int k = 0; k < 8; k++){
+                for(int l = 0; l < 8; l++){
+                    if(move_piece(temp_board, i,j,k,l, &next_move)){
+                        return 0;
+                    }
+                }
+            }
+        }
+    }
+    return 1;
+}
 
 int main(){
     _setmode(_fileno(stdout), 0x00020000);
@@ -577,17 +596,22 @@ int main(){
                 next_move = 0;
                 print_board(board, next_move);
             }else if(started){
-                move_piece(board, move, &next_move);
-                wprintf(L"%ls", move);
+                process_move(board, move, &next_move);
+                if(!check_king(board, next_move, 0, 0)){
+                    if(check_mate(board,next_move)){
+                        wprintf(L"Checkmate \n", move);
+                        started = 0;
+                        continue;
+                    }
+                }
+                wprintf(L"%ls \n", move);
                 print_board(board, next_move);
-                wprintf(L"%i",board[0]);
             }else if(wcscmp(move,L"end") == 0){
                 int started = 0;
                 setup_board(board);
             }else if(wcscmp(move,L"exit") == 0){
                 break;
             }
-            wprintf(L"%s\n",move);
         }
     }
     
