@@ -149,25 +149,59 @@ int char_to_row(char c){
 }
 
 int check_path(int start, int end){
-
+    return 1;
 }
 
-int valid_move_for_piece(int piece, int start, int end){
+int valid_move_for_piece(int piece, int start, int end, int end_occupied){
     if(end < 0 || end > 63 || end == start){
         return 0;
     }
+
+    int row_start = start - (start % 8);
+    int row_end = end - (end % 8);
+    int row_diff = abs(row_end / 8 - row_start / 8);
+    int column_diff = abs((start - row_start) - (end - row_end));
+
     if(piece == 1){
-        if((((end - start) > 6 && (end - start) < 9) || (start < 16 && (end - start) == 16)) && (end - start) > 0){
+        // White pawn
+        if(((end - start) == 8) ||
+         (((end - start) == 7 || (end - start) == 9) && end_occupied) ||
+          (start < 16 && (end - start) == 16)){
             return 1;
         }
-    }else if(piece == 2){
+    }else if(piece == 7){
+        // black pawn
+        wprintf(L" %i ", end-start);
+        if(
+            ((end - start) == -8) ||
+            (((end - start) == -7 || (end - start) == -9) && end_occupied) ||
+            (start > 47 && (end - start) == -16)){
+                return 1;
+        }
+    }else if(piece == 2 || piece == 8){
+        // Rooks
         int row_start = start - (start % 8);
-        if(end % 8 == start % 8 || (end - row_start < 8 && end - row_start > 0)){
+        if(column_diff == 0 || row_diff == 0){
             return 1;
         }
-    }else if(piece == 3){
-        int row_start = start - (start % 8);
-        if(end % 8 == start % 8 || (end - row_start < 8 && end - row_start > 0)){
+    }else if(piece == 3 || piece == 9){
+        // Knights
+        if((row_diff == 2 && column_diff == 1) || (row_diff == 1 && column_diff == 2)){
+            return 1;
+        }
+    }else if(piece == 4 || piece == 10){
+        // Bishops
+        if(row_diff == column_diff){
+            return 1;
+        }
+    }else if(piece == 5 || piece == 11){
+        // Queens
+        if(row_diff == column_diff || column_diff == 0 || row_diff == 0){
+            return 1;
+        }
+    }else if(piece == 6 || piece == 12){
+        //Kinds
+        if(row_diff < 2 && column_diff < 2){
             return 1;
         }
     }
@@ -185,11 +219,15 @@ void move_piece(int *board, wchar_t move[], int *next_move){
 
     if(!pinned){
         piece = board[move_row * 8 + move_column];
-        if(piece == 0 || (*next_move == 0 && piece > 7) || (*next_move == 1 && piece < 8)){
+        wprintf(L"%i",piece);
+        if(piece == 0 || (*next_move == 0 && piece > 6) || (*next_move == 1 && piece < 7)){
             return;
         }
-        if(valid_move_for_piece(piece, move_row * 8 + move_column, result_row * 8 + result_column)){
+        int end_occupied = board[result_row * 8 + result_column] != 0;
+        if(valid_move_for_piece(piece, move_row * 8 + move_column, result_row * 8 + result_column, end_occupied)){
+
             if(piece == 3 || piece == 9 || check_path(move_row * 8 + move_column, result_row * 8 + result_column)){
+                wprintf(L" aaVaa ");
                 valid_move = 1;
             }
         }
