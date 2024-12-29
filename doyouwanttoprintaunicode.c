@@ -1,4 +1,4 @@
-// windows printing unicode characters
+// windows printing unicode characters, bonus skeleton file
 #include <stdio.h>
 #include <fcntl.h>
 #include <io.h>
