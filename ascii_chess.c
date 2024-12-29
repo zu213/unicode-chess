@@ -26,14 +26,14 @@
 
 void setup_board(int *board){
     int temp_board[64] = {
-        2,3,4,5,0,4,3,2,
+        2,3,4,5,6,4,3,2,
         1,1,1,1,1,1,1,1,
         0,0,0,0,0,0,0,0,
-        0,0,0,0,0,11,0,0,
-        0,0,0,0,0,0,0,6,
-        0,0,0,0,0,7,0,0,
-        7,7,7,7,7,0,7,7,
-        8,9,10,0,12,10,9,8};
+        0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,
+        7,7,7,7,7,7,7,7,
+        8,9,10,11,12,10,9,8};
 
      for (int i = 0; i < 64; i++) {
         board[i] = temp_board[i];
@@ -60,10 +60,8 @@ int print_board(int board[], int move_next){
     wchar_t black_queen = L'♕';
     wchar_t black_king = L'♔';
 
-
     int board_code;
 
-    wprintf(L"\n");
     for(i = board_length - 1; i >= 0; i--){
         for(int j = 0; j < board_length; j++){
             board_code = board[i * 8 + j];
@@ -104,42 +102,20 @@ int print_board(int board[], int move_next){
     for(int i = 1; i<= board_length; i++){
         wprintf(L"%c ", 'A' + i - 1);
     }
-    wprintf(L"\n  ");
+    wprintf(L"\n ");
 
     if(move_next){
-        wprintf(L"it is blacks go");
+        wprintf(L"It is blacks go");
     }else{
-        wprintf(L"it is whites go");
+        wprintf(L"It is whites go");
     }
+    wprintf(L"\n");
     fflush( stdout );
     return 0;
 }
 
-int char_to_row(char c){
-    if(c == 'A'){
-        return 0;
-    }else if(c == 'B'){
-        return 1;
-    }else if(c == 'C'){
-        return 2;
-    }else if(c == 'D'){
-        return 3;
-    }else if(c == 'E'){
-        return 4;
-    }else if(c == 'F'){
-        return 5;
-    }else if(c == 'G'){
-        return 6;
-    }else if(c == 'H'){
-        return 7;
-    }else{
-        wprintf(L"invalid character %c", c);
-        return -1;
-    }
-}
-
 int check_path(int *board, int next_move, int start, int end){
-    wprintf(L"LKLK");
+    //wprintf(L"Checking path...");
     if(board[end] != 0){
         if(board[end] > 6 && next_move == 1 || board[end] < 7 && next_move == 0){
             return 0;
@@ -149,7 +125,6 @@ int check_path(int *board, int next_move, int start, int end){
     int row_end = end - (end % 8);
     int row_diff = row_end / 8 - row_start / 8;
     int column_diff = (start - row_start) - (end - row_end);
-    wprintf(L"MKMK %i, %i ", row_diff, column_diff);
     int current_square = start;
     while(1){
         if(column_diff > 0){
@@ -167,24 +142,18 @@ int check_path(int *board, int next_move, int start, int end){
         if(current_square == end){
             return 1;
         }
-        wprintf(L"LKLK %i jj", current_square);
 
         if(board[current_square] != 0){
             return 0;
         }
-
-
     }
     return 0;
 }
 
-
-
 int check_king(int board[],  int current_move, int start, int end){
-    int size = 64;
-    
+    //wprintf(L"Checking king %i...", current_move);
     int temp_board[64];
-    memcpy(temp_board, board, size * sizeof(int));
+    memcpy(temp_board, board, 64 * sizeof(int));
 
     temp_board[end] = board[start];
     temp_board[start] = 0;
@@ -196,7 +165,6 @@ int check_king(int board[],  int current_move, int start, int end){
             break;
         }
     }
-    wprintf(L"king %i,",i);
 
     // now check king threats
     // CHECKING DOWN
@@ -216,13 +184,11 @@ int check_king(int board[],  int current_move, int start, int end){
             temp_board[current_square] == 10){
                 break;
         }else if((temp_board[current_square] == 12 || temp_board[current_square] == 6) && current_square - end != 8){
-            wprintf(L"testytesty AA %i bb %i ads ", current_square, end);
             break;
         }else{
-            wprintf(L"%i dUP",current_square);
+            wprintf(L"Can't move as kinds is checked bottom");
             return 0;
         }
-        
     }
 
     // checking up
@@ -242,10 +208,9 @@ int check_king(int board[],  int current_move, int start, int end){
             temp_board[current_square] == 10){
                 break;
         }else if((temp_board[current_square] == 12 || temp_board[current_square] == 6) && current_square - end != -8){
-            wprintf(L"testytesty AA %i bb %i ads ", current_square, end);
             break;
         }else{
-            wprintf(L"%i DOWN",current_square);
+            wprintf(L"Can't move as kinds is checked bottom top");
             return 0;
         }
     }
@@ -270,7 +235,7 @@ int check_king(int board[],  int current_move, int start, int end){
         }else if((temp_board[current_square] == 12 || temp_board[current_square] == 6) && current_square - end != -1){
             break;
         }else{
-            wprintf(L"%i left",current_square);
+            wprintf(L"Can't move as kinds is checked bottom left");
             return 0;
         }
     }
@@ -280,7 +245,6 @@ int check_king(int board[],  int current_move, int start, int end){
     int end_square = start_square + 9;
     while(current_square + 1 < end_square){
         current_square += 1;
-        wprintf(L" %i n",temp_board[current_square]);
         if(temp_board[current_square] == 0){
             continue;
         }else if((temp_board[current_square] < 7 && current_move == 0) || (temp_board[current_square] > 6 && current_move == 1)){
@@ -294,10 +258,9 @@ int check_king(int board[],  int current_move, int start, int end){
             temp_board[current_square] == 10){
                 break;
         }else if((temp_board[current_square] == 12 || temp_board[current_square] == 6) && current_square - end != 1){
-            wprintf(L"testytesty");
             break;
         }else{
-            wprintf(L"%i right",current_square);
+            wprintf(L"Can't move as kinds is checked right");
             return 0;
         }
     }
@@ -314,18 +277,18 @@ int check_king(int board[],  int current_move, int start, int end){
     }else{
         knight = 3;
     }
-    if(
-        temp_board[(current_square - 2) - 8] == knight ||
-        temp_board[(current_square - 2) + 8] == knight ||
-        temp_board[(current_square + 2) - 8] == knight ||
-        temp_board[(current_square + 2) + 8] == knight ||
-        temp_board[(current_square - 1) - 16] == knight ||
-        temp_board[(current_square - 1) + 16] == knight ||
-        temp_board[(current_square + 1) - 16] == knight ||
-        temp_board[(current_square + 1) + 16] == knight 
-        ){
-            return 0;
-        }
+    int possible_knights[8] = {(current_square - 2) - 8, (current_square + 2) - 8,
+     (current_square - 2) + 8, (current_square + 2) + 8, (current_square - 1) - 16,
+      (current_square + 1) - 16, (current_square - 1) + 16, (current_square + 1) + 16 };
+
+    for(int i = 0; i < 8; i++){
+        if(
+            possible_knights[i] == 3
+            ){
+                wprintf(L"Can't move as kinds is checked by knight %i ", current_square);
+                return 0;
+            }
+    }
     
     // now check diagonals
 
@@ -349,7 +312,7 @@ int check_king(int board[],  int current_move, int start, int end){
         }else if((temp_board[current_square] == 1) && (current_square - end) != -9){
             break;
         }else{
-            wprintf(L"%i top left",current_square);
+            wprintf(L"Can't move as kinds is checked bottom right");
             return 0;
         }
         
@@ -357,7 +320,6 @@ int check_king(int board[],  int current_move, int start, int end){
 
     // checking top right
      current_square = i;
-     wprintf(L"AAAA2");
     while(current_square - 7 > 0 && (current_square - 7) % 8 != 7){
         current_square -= 7;
         if(temp_board[current_square] == 0){
@@ -376,17 +338,15 @@ int check_king(int board[],  int current_move, int start, int end){
         }else if((temp_board[current_square] == 1) && (current_square - end) != -7){
             break;
         }else{
-            wprintf(L"%i top right",current_square);
+            wprintf(L"Can't move as kinds is checked bottom left");
             return 0;
         }
     }
 
         // checking bottom left
      current_square = i;
-    wprintf(L"%i top LEFT",current_square % 8);
     while(current_square + 7 < 64 && (current_square + 7) % 8 != 7){
         current_square += 7;
-        wprintf(L"%i top LEFT",current_square);
         if(temp_board[current_square] == 0){
             continue;
         }else if((temp_board[current_square] < 7 && current_move == 0) || (temp_board[current_square] > 6 && current_move == 1)){
@@ -401,11 +361,9 @@ int check_king(int board[],  int current_move, int start, int end){
         }else if((temp_board[current_square] == 12 || temp_board[current_square] == 6) && current_square - i != 7){
             break;
         }else if((temp_board[current_square] == 7) && (current_square - i) != 7){
-            wprintf(L"%i top %i right",current_square, i);
-
             break;
         }else{
-            wprintf(L"%i bottom left ",current_square);
+            wprintf(L"Can't move as kinds is checked top left");
             return 0;
         }
     }
@@ -414,7 +372,6 @@ int check_king(int board[],  int current_move, int start, int end){
      current_square = i;
     while(current_square + 9 > 0 && (current_square + 9) % 8 != 0){
         current_square += 9;
-        wprintf(L"%i top right",current_square);
         if(temp_board[current_square] == 0){
             continue;
         }else if((temp_board[current_square] < 7 && current_move == 0) || (temp_board[current_square] > 6 && current_move == 1)){
@@ -427,12 +384,11 @@ int check_king(int board[],  int current_move, int start, int end){
             temp_board[current_square] == 9){
                 break;
         }else if((temp_board[current_square] == 12 || temp_board[current_square] == 6) && current_square - i != 9){
-            wprintf(L"%i top right",current_square);
             break;
         }else if((temp_board[current_square] == 7) && (current_square - i) != 9){
             break;
         }else{
-            wprintf(L"%i top right",current_square);
+            wprintf(L"Can't move as kinds is checked top right");
             return 0;
         }
     }
@@ -459,7 +415,6 @@ int valid_move_for_piece(int piece, int start, int end, int end_occupied){
         }
     }else if(piece == 7){
         // black pawn
-        wprintf(L" %i ", end-start);
         if(
             ((end - start) == -8) ||
             (((end - start) == -7 || (end - start) == -9) && end_occupied) ||
@@ -488,7 +443,7 @@ int valid_move_for_piece(int piece, int start, int end, int end_occupied){
             return 1;
         }
     }else if(piece == 6 || piece == 12){
-        //Kinds
+        //Kings
         if(row_diff < 2 && column_diff < 2){
             return 1;
         }
@@ -500,36 +455,29 @@ int valid_move_for_piece(int piece, int start, int end, int end_occupied){
 
 int move_piece(int *board, int move_row, int move_column, int result_row, int result_column, int *next_move){
     int piece;
-    int pinned = 0;
     int valid_move = 0;
 
-    if(!pinned){
-        piece = board[move_row * 8 + move_column];
-        wprintf(L"%i",piece);
-        if(piece == 0 || (*next_move == 0 && piece > 6) || (*next_move == 1 && piece < 7)){
-            return 0;
-        }
-        int end_occupied = board[result_row * 8 + result_column] != 0;
-        if(valid_move_for_piece(piece, move_row * 8 + move_column, result_row * 8 + result_column, end_occupied)){
-
-            if(piece == 3 || piece == 9 || check_path(board, *next_move, move_row * 8 + move_column, result_row * 8 + result_column)){
-                wprintf(L" aaVaa ");
-                if(check_king(board, *next_move, move_row * 8 + move_column, result_row * 8 + result_column)){
-                    valid_move = 1;
-                }
-            }
-        }
-        
-        if(valid_move){
-            board[move_row * 8 + move_column] = 0;
-            wprintf(L"%i ccc %i DDDD",piece, move_column);
-            board[result_row * 8 + result_column] = piece;
-            *next_move = *next_move * -1 + 1;
-            wprintf(L"%i ccc %i DDDD",piece, board[result_row * 8 + result_column]);
-            return 1;
-        }
+    piece = board[move_row * 8 + move_column];
+    if(piece == 0 || (*next_move == 0 && piece > 6) || (*next_move == 1 && piece < 7)){
         return 0;
     }
+    int end_occupied = board[result_row * 8 + result_column] != 0;
+    if(valid_move_for_piece(piece, move_row * 8 + move_column, result_row * 8 + result_column, end_occupied)){
+
+        if(piece == 3 || piece == 9 || check_path(board, *next_move, move_row * 8 + move_column, result_row * 8 + result_column)){
+            if(check_king(board, *next_move, move_row * 8 + move_column, result_row * 8 + result_column)){
+                valid_move = 1;
+            }
+        }
+    }
+    
+    if(valid_move){
+        board[move_row * 8 + move_column] = 0;
+        board[result_row * 8 + result_column] = piece;
+        *next_move = *next_move * -1 + 1;
+        return 1;
+    }
+    return 0;
 
 }
 
@@ -596,6 +544,7 @@ int main(){
                 next_move = 0;
                 print_board(board, next_move);
             }else if(started){
+                system("cls");
                 process_move(board, move, &next_move);
                 if(!check_king(board, next_move, 0, 0)){
                     if(check_mate(board,next_move)){
