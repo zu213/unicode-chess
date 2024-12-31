@@ -391,7 +391,7 @@ int check_mate(int board[], int next_move){
             for(int k = 0; k < 8; k++){
                 for(int l = 0; l < 8; l++){
                     if(move_piece(temp_board, i,j,k,l, &next_move)){
-                        wprintf(L"%i, %i, %i vv %i ", i, j, k, l);
+                        //wprintf(L"%i, %i, %i vv %i ", i, j, k, l);
                         return 0;
                     }
                 }
