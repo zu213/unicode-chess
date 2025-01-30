@@ -407,16 +407,20 @@ int main(){
     int board[64] = {0};
     int next_move; // who has the next move
     int started = 0;
+    int record = 0;
     setup_board(board);
 
-    wprintf(L"WELCOME TO CHESS, TYPE 'start' TO BEGIN OR 'exit' TO END \n");
+    wprintf(L"WELCOME TO CHESS, TYPE 'start' TO BEGIN, 'start-record' TO PLAY WITH MOVE HISTORY OR 'exit' TO END \n");
 
     // main loop wait for input
     while(1){
         if (wscanf(L"%99[^\n]", move) == 1){
-            while (getwchar() != '\n'); // clear the new line characters
+            while (getwchar() != '\n');
 
-            if (wcscmp(move, L"start") == 0 && !started){
+            if ((wcscmp(move, L"start") == 0 || wcscmp(move, L"start-record") == 0) && !started){
+                if(wcscmp(move, L"start-record") == 0){
+                    record = 1;
+                }
                 // Start game
                 started = 1;
                 next_move = 0;
@@ -428,7 +432,9 @@ int main(){
                 setup_board(board);
             }else if(started){
                 // make a move
-                system("cls");
+                if(record == 0){
+                    system("cls");
+                }
                 process_move(board, move, &next_move);
                 if(!check_king(board, next_move, 0, 0)){
                     if(check_mate(board,next_move)){
