@@ -10,7 +10,7 @@
 
 *If an incorrect move is entered it will re render but no move will have been made.*  
 
-
+<img src="./scholars.gif" alt="scholars gif" width="500"/>
 
 ### Future 
 TODO: Add pawn promotions and castling.  
