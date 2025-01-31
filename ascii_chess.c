@@ -114,14 +114,18 @@ int print_board(int board[], int move_next){
     return 0;
 }
 
-int check_path(int *board, int next_move, int current_square, int end){
-    // Check if the path they try to travel is empty and the destination is valid
+int check_path_end(int *board, int next_move, int end) {
     // first check end is valid
     if(board[end] != 0){
         if(board[end] > 6 && next_move == 1 || board[end] < 7 && next_move == 0){
             return 0;
         }
     }
+    return 1;
+}
+
+int check_path(int *board, int next_move, int current_square, int end){
+    // Check if the path they try to travel is empty and the destination is valid
 
     int row_start = current_square - (current_square % 8);
     int row_end = end - (end % 8);
@@ -352,9 +356,11 @@ int move_piece(int *board, int move_row, int move_column, int result_row, int re
     // Main check on if move is possible
 
     if(valid_move_for_piece(piece, start_pos, end_pos, end_occupied)){
-        if(piece == 3 || piece == 9 || check_path(board, *next_move, start_pos, end_pos)){
-            if(check_king(board, *next_move, start_pos, end_pos)){ // Check if they need to move out of check
-                valid_move = 1;
+        if(check_path_end(board, *next_move, end_pos)){
+            if(piece == 3 || piece == 9 || check_path(board, *next_move, start_pos, end_pos)){
+                if(check_king(board, *next_move, start_pos, end_pos)){ // Check if they need to move out of check
+                    valid_move = 1;
+                }
             }
         }
     }

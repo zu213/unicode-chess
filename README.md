@@ -18,4 +18,4 @@ TODO: Add en passant.
 
 ### Nota bene
 **!! BUILT TO WORK ON WINDOWS !!**  
-Importantly, you need to be running ian terminal that support Unicode (UTF-8), for windows I recommend <a href="https://github.com/microsoft/terminal"> Windows Terminal </a>.
+Importantly, you need to be running ian terminal that support Unicode (UTF-8), for windows I recommend <a href="https://github.com/microsoft/terminal">Windows Terminal</a>.
